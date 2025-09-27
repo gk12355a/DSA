@@ -10,19 +10,19 @@ func max(a int, b int) int {
 	}
 }
 func findMaxLength(nums []int) int {
+	prefix := map[int]int{0: -1}
 	count := 0
 	maxLength := 0
-	indieces := map[int]int{0: -1}
 	for i, n := range nums {
 		if n == 1 {
 			count++
 		} else {
 			count--
 		}
-		if _, fine := indieces[count]; fine {
-			maxLength = max(maxLength, i-indieces[count])
+		if _, ok := prefix[count]; ok {
+			maxLength = max(maxLength, i-prefix[count])
 		} else {
-			indieces[count] = i
+			prefix[count] = i
 		}
 	}
 	return maxLength
