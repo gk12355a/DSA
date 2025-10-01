@@ -1,6 +1,7 @@
 package v1handler
 
 import (
+	"ginroute/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,9 +29,15 @@ func (c *CategoryHandler) GetCategoryV1(ctx *gin.Context) {
 }
 func (c *CategoryHandler) GetCategoryByIdV1(ctx *gin.Context) {
 	category := ctx.Param("category")
-	if !validCategory[category] {
+	// if !validCategory[category] {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{
+	// 		"error": "Invalid category",
+	// 	})
+	// 	return
+	// }
+	if err := utils.ValidationInList("category", category, validCategory); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid category",
+			"error": err.Error(),
 		})
 		return
 	}

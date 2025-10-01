@@ -1,11 +1,10 @@
 package v1handler
 
 import (
+	"ginroute/utils"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -22,19 +21,21 @@ func (u *UserHandler) GetUserV1(ctx *gin.Context) {
 }
 func (u *UserHandler) GetUserByIdV1(ctx *gin.Context) {
 	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
+
+	id, err := utils.ValidationPositiveInt("id", idStr)
 	if err != nil || id <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid user ID",
+			"error": err.Error(),
 		})
 		return
 	}
-	if id <= 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "User ID must be a positive integer",
-		})
-		return
-	}
+	// if id <= 0 {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{
+	// 		"error":   "User ID must be a positive integer",
+	// 		"user_id": id,
+	// 	})
+	// 	return
+	// }
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Get User By Id V1",
@@ -44,17 +45,17 @@ func (u *UserHandler) GetUserByIdV1(ctx *gin.Context) {
 
 func (u *UserHandler) GetUserByUuIdV1(ctx *gin.Context) {
 	uuidStr := ctx.Param("uuid")
-	// go get github.com/google/uuid
-	_, err := uuid.Parse(uuidStr)
+
+	uid, err := utils.ValidationUuid("uuid", uuidStr)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid UUID",
+			"error": err.Error(),
 		})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Get User By Id V1",
-		"user_id": uuidStr,
+		"user_id": uid,
 	})
 }
 func (u *UserHandler) PostUserV1(ctx *gin.Context) {
